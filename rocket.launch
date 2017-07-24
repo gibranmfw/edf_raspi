@@ -1,0 +1,14 @@
+<launch>
+	<arg name="fcu_url" default="/dev/ttyACM0:115200" />
+	
+	
+	<include file="$(find mavros)/launch/apm.launch">
+		<arg name="fcu_url" value="$(arg fcu_url)" />
+		<arg name="gcs_url" value="" />
+		<arg name="tgt_system" value="1" />
+		<arg name="tgt_component" value="1" />
+		<arg name="log_output" value="screen" />
+	</include>
+
+	<node pkg="aurora" name="script" type="scripts.py" output="screen" />
+</launch>

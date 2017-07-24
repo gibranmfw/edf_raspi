@@ -1,0 +1,24 @@
+#! /usr/bin/env python
+import rospy
+from sensor_msgs.msg import Imu
+
+def getimu():
+	rospy.init_node('scripts', anonymous=True)
+	#rospy.Subscriber("/mavros/imu/data", Imu, callback))
+	rospy.spin()
+
+def callback(data):
+	id = ImuData(data)
+	#id.seeData()
+
+class ImuData:
+	def __init__(self, data):
+		self.data = data
+
+	def seeData(self):
+		print("{}".format(self.data.orientation.x))
+		print(self.data.angular_velocity.x)
+		print(self.data.linear_acceleration.x)
+
+if __name__ == '__main__':
+	getimu()
