@@ -94,12 +94,4 @@ class WaypointHandler:
 		new_wp.z_alt = alt
 
 		self.wp_list.waypoints.append(new_wp)
-		
 
-def start():
-	wh = WaypointHandler()
-	wh.addwaypoint(5, 5, 5)
-	wh.sendwplist()
-
-if __name__ == "__main__":
-	start()
