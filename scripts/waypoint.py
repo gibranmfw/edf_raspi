@@ -97,8 +97,9 @@ class WaypointHandler:
 		
 
 def start():
-	wp = WaypointHandler()
-	wp.sendwplist()
+	wh = WaypointHandler()
+	wh.addwaypoint(5, 5, 5)
+	wh.sendwplist()
 
 if __name__ == "__main__":
 	start()
