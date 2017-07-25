@@ -22,9 +22,9 @@ class ImuData:
 class ESCHandler:
 	def __init__(self):
 		self.esc = servo.servo(2)
-	def esc_on():
+	def esc_on(self):
 		self.esc.move_max()
-	def esc_off():
+	def esc_off(self):
 		self.esc.move_min()
 
 class SafetyHandler:
@@ -32,9 +32,9 @@ class SafetyHandler:
 		self.off = False
 		self.para = servo.servo(0)
 		self.esc = esc
-	def emergency_on():
+	def emergency_on(self):
 		self.off = True
-	def check_emergency():
+	def check_emergency(self):
 		if(self.off):
 			self.para.move_min()
 			self.esc.esc_off()

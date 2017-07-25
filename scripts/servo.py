@@ -11,10 +11,24 @@ class Servo:
 		self.min_power = 1100
 	
 	def move_max(self):
-		self.move_servo(self.max_power)
+		rospy.wait_for_service("/mavros/set_mode")
+		change_mode = rospy.ServiceProxy("mavros/set_mode", SetMode)
+		resp1 = change_mode(custom_mode="manual")
+		if "True" in str(resp1):
+			try:
+				self.move_servo(self.max_power)
+			except rospy.ROSInterruptionException, e:
+				print(e)
 
 	def move_min(self):
-		self.move_servo(self.min_power)
+		rospy.wait_for_service("/mavros/set_mode")
+		change_mode = rospy.ServiceProxy("mavros/set_mode", SetMode)
+		resp1 = change_mode(custom_mode="manual")
+		if "True" in str(resp1):
+			try:
+				self.move_servo(self.min_power)
+			except rospy.ROSInterruptionException, e:
+				print(e)
 
 	def move_servo(self, pwm):
 		pub = rospy.Publisher("mavros/rc/override", OverrideRCIn, queue_size = 10)
@@ -31,6 +45,3 @@ class Servo:
 				rospy.loginfo(msg)
 				pub.publish(msg)
 				r.sleep()
-
-servo = Servo(0)
-servo.move_max()
