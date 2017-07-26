@@ -1,3 +1,4 @@
+#! usr/bin/env python
 import rospy
 import time
 from mavros_msgs.msg import OverrideRCIn
@@ -7,35 +8,13 @@ class ModeHandler:
 	def __init__(self):
 		pass
 
-	def change_mode(mode):
+	def change_mode(self, mode):
 		rospy.wait_for_service("/mavros/set_mode")
 		cm = rospy.ServiceProxy("mavros/set_mode", SetMode)
 		resp1 = cm(custom_mode=mode)
 		return "True" in str(resp1)
 
-class ParachuteHandler(ServoHandler):
-	def __init__(self, channel):
-		parent(ParachuteHandler, self).__init__(channel)
-
-class MotorHandler(ServoHandler):
-	def __init__(self, channel):
-		parent(MotorHandler, self).__init__(channel)
-		self.set_max_power(2000)
-		self.set_min_power(700)
-
-	def move_custom(self, power):
-		parent(MotorHandler, self).move_custom(power)
-		self.mode_handler.change("rtl")
-
-	def move_min(self):
-		parent(MotorHandler, self).move_min()
-		self.mode_handler.change_mode("rtl")
-
-	def move_max(self):
-		parent(MotorHandler, self).move_max()
-		self.mode_handler.change_mode("rtl")
-
-class ServoHandler:
+class ServoHandler(object):
 	def __init__(self, channel):
 		self.channel = channel
 		self.exec_time = 1
@@ -43,10 +22,10 @@ class ServoHandler:
 		self.min_power = 1100
 		self.mode_handler = ModeHandler()
 
-	def set_max_power(power):
+	def set_max_power(self, power):
 		self.max_power = power
 
-	def set_min_power(power):
+	def set_min_power(self, power):
 		self.min_power = power
 
 	def move_custom(self, power):
@@ -66,7 +45,7 @@ class ServoHandler:
 				print(e)
 
 	def move_min(self):
-		success = self.mode_hanlder.change_mode("manual")
+		success = self.mode_handler.change_mode("manual")
 		if success:
 			try:
 				self.move_servo(self.min_power)
@@ -88,3 +67,29 @@ class ServoHandler:
 				rospy.loginfo(msg)
 				pub.publish(msg)
 				r.sleep()
+
+class ParachuteHandler(ServoHandler):
+	def __init__(self, channel):
+		super(ParachuteHandler, self).__init__(channel)
+
+class MotorHandler(ServoHandler):
+	def __init__(self, channel):
+		super(MotorHandler, self).__init__(channel)
+		self.set_max_power(2000)
+		self.set_min_power(700)
+
+	def move_custom(self, power):
+		super(MotorHandler, self).move_custom(power)
+		self.mode_handler.change("rtl")
+
+	def move_min(self):
+		super(MotorHandler, self).move_min()
+		self.mode_handler.change_mode("rtl")
+
+	def move_max(self):
+		super(MotorHandler, self).move_max()
+		self.mode_handler.change_mode("rtl")
+
+
+para = MotorHandler(2)
+para.move_max()
