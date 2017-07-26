@@ -32,7 +32,7 @@ class ServoHandler(object):
 		success = self.mode_handler.change_mode("manual")
 		if success:
 			try:
-				self.move_servo(power)
+				self.__move_servo(power)
 			except rospy.ROSInterruptionException, e:
 				print(e)
 	
@@ -40,7 +40,7 @@ class ServoHandler(object):
 		success = self.mode_handler.change_mode("manual")
 		if success:
 			try:
-				self.move_servo(self.max_power)
+				self.__move_servo(self.max_power)
 			except rospy.ROSInterruptionException, e:
 				print(e)
 
@@ -48,11 +48,11 @@ class ServoHandler(object):
 		success = self.mode_handler.change_mode("manual")
 		if success:
 			try:
-				self.move_servo(self.min_power)
+				self.__move_servo(self.min_power)
 			except rospy.ROSInterruptionException, e:
 				print(e)
 
-	def move_servo(self, pwm):
+	def __move_servo(self, pwm):
 		pub = rospy.Publisher("mavros/rc/override", OverrideRCIn, queue_size = 10)
 		rospy.init_node("custmom_talker", anonymous=True)
 		r = rospy.Rate(10)
@@ -90,6 +90,3 @@ class MotorHandler(ServoHandler):
 		super(MotorHandler, self).move_max()
 		self.mode_handler.change_mode("rtl")
 
-
-para = MotorHandler(2)
-para.move_max()
