@@ -10,5 +10,5 @@
 		<arg name="log_output" value="screen" />
 	</include>
 
-	<node pkg="aurora" name="ndata" type="ndata.py" output="screen" />
+	<node pkg="aurora" name="actuator_node" type="actuator_node.py" output="screen" />
 </launch>
