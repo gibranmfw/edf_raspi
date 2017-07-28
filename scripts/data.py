@@ -59,7 +59,7 @@ class ImuHandler:
 class DataHandler:
 	def __init__(self):#(self, start_lat, start_long):
 		self.imu_sub = message_filters.Subscriber("/mavros/imu/data", Imu)
-		self.gps_sub = message_filters.Subscriber("/mavros/global_position/raw/fix", NavSatFix)
+		self.gps_sub = message_filters.Subscriber("/mavros/global_positiroslaunch mavros apm.launch fcu_url:=///dev/ttyACM0:115200on/raw/fix", NavSatFix)
 		self.sh = SafetyHandler()
 		self.fetch_flag = True
 		#self.slat = start_lat
