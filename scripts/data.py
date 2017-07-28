@@ -33,6 +33,9 @@ class GPSHandler:
 	def get_data(self):
 		return "{} {} {}".format(self.data.latitude, self.data.longitude, self.data.altitude)
 
+	def get_data_raw(self):
+		return (self.data.latitude, self.data.longitude, self.data.altitude)
+
 	def get_data_w_distance(self, slat, slong):
 		clat = self.data.latitude
 		clong = self.data.longitude
@@ -54,21 +57,27 @@ class ImuHandler:
 		return "{} {} {}".format(self.data.linear_acceleration.x, self.data.linear_acceleration.y, self.data.linear_acceleration.z)
 
 class DataHandler:
-	def __init__(self, start_lat, start_long):
-		rospy.init_node("scripts", anonymous=True)
+	def __init__(self):#(self, start_lat, start_long):
 		self.imu_sub = message_filters.Subscriber("/mavros/imu/data", Imu)
 		self.gps_sub = message_filters.Subscriber("/mavros/global_position/raw/fix", NavSatFix)
-		self.sh = Safetyhandler()
-		self.slat = start_lat
-		self.slong = start_long
+		self.sh = SafetyHandler()
+		self.fetch_flag = True
+		#self.slat = start_lat
+		#self.slong = start_long
 
 	def __callback(self, imu, gps):
 		ih = ImuHandler(imu)
 		gh = GPSHandler(gps)
-		print(ih.get_data_w_distance(self.slat, self.slong))
-		print(gh.get_acceleration())
+		if(self.fetch_flag):
+			self.slat, self.slong, alt  = gh.get_data_raw()
+			self.fetch_flag = False
+			print("{} {} {}".format(self.slat, self.slong, alt))
+		else: 
+			print(gh.get_data_w_distance(self.slat, self.slong))
+		print(ih.get_acceleration())
 
 	def start(self):
 		ts = message_filters.ApproximateTimeSynchronizer([self.imu_sub, self.gps_sub], 10, 1)
 		ts.registerCallback(self.__callback)
 		rospy.spin()
+

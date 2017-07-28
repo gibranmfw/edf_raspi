@@ -10,5 +10,5 @@
 		<arg name="log_output" value="screen" />
 	</include>
 
-	<node pkg="aurora" name="script" type="scripts.py" output="screen" />
+	<node pkg="aurora" name="ndata" type="ndata.py" output="screen" />
 </launch>

@@ -7,8 +7,8 @@ from servo import MotorHandler
 class SafetyHandler:
 	def __init__(self):
 		self.emergency = False
-		self.para = ParachuteHandler()
-		self.esc = MotorHandler()
+		self.para = ParachuteHandler(5)
+		self.esc = MotorHandler(3)
 		self.safe_range = 200 #200 meter
 		self.motoroff_range = 175
 
