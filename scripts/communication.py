@@ -1,13 +1,19 @@
 #! /usr/bin/python
 
 import serial
+from time import sleep
 
-class Xbee:
-	def __init__():
-		this.ser = serial.Serial("/dev/ttyAMA0", baudrate=56700)
+class CommunicationHandler:
+	def __init__(self):
+		self.ser = serial.Serial("/dev/ttyUSB0", 57600, timeout=1)
+
+	def read(self):
+		return self.ser.readline()
+
+	def write(self, message):
+		ser.writeline(message)
+		sleep(0.05)
 	
-	def write(data):
-		ser.write(str(data))
+	def close(self):
+		self.ser.close()
 
-	def read():
-		return ser.read()
