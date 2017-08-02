@@ -11,4 +11,5 @@
 	</include>
 
 	<node pkg="aurora" name="actuator_node" type="actuator_node.py" output="screen" />
+	<node pkg="aurora" name="data_node" type="data_node.py" output="screen"/>
 </launch>
