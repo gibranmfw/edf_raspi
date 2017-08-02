@@ -27,16 +27,13 @@ class ActuatorHandler:
 		if(self.fetch_flag):
 			self.slat, self.slong, alt = gh.get_data_raw()
 			self.fetch_flag = False
-			print("{} {} {}".format(self.slat, self.slong, alt))
 		else:
 			data = gh.get_data_w_distance(self.slat, self.slong)
 			temp = data.split()
 			self.curr_alt = float(temp[2])
 			self.curr_dis = float(temp[3])
-			print(data)
 			self.sh.check_range(self.curr_dis)
 			self.sh.check_range(self.curr_alt)
-		print(ih.get_acceleration())
 
 	def start(self):
 		ts = message_filters.ApproximateTimeSynchronizer([self.imu_sub, self.gps_sub], 10, 1)

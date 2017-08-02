@@ -11,8 +11,7 @@ class CommunicationHandler:
 		return self.ser.readline()
 
 	def write(self, message):
-		ser.writeline(message)
-		sleep(0.05)
+		self.ser.writelines(message)
 	
 	def close(self):
 		self.ser.close()
