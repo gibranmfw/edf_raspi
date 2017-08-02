@@ -11,18 +11,18 @@ from data import ImuHandler
 
 class ActuatorHandler:
 	def __init__(self):
-		self.imu_sub = message_filters.Subscriber("/mavros/imu/data", Imu)
-		self.gps_sub = message_filters.Subscriber("/mavros/global_position/raw/fix", NavSatFix)
+		#self.imu_sub = message_filters.Subscriber("/mavros/imu/data", Imu)
+		#self.gps_sub = message_filters.Subscriber("/mavros/global_position/raw/fix", NavSatFix)
 		self.sh = SafetyHandler()
 		self.esc = ServoHandler(2)
-		self.reader = ch()
+		self.comm = ch()
 		self.fetch_flag = True
 		self.toggle = True
 		self.curr_alt = 0
 		self.curr_dis = 0
 
-	def __callback(self, imu, gps):
-		ih = ImuHandler(imu)
+	def __callback(self, gps):
+		#ih = ImuHandler(imu)
 		gh = GPSHandler(gps)
 		if(self.fetch_flag):
 			self.slat, self.slong, alt = gh.get_data_raw()
@@ -34,14 +34,16 @@ class ActuatorHandler:
 			self.curr_dis = float(temp[3])
 			self.sh.check_range(self.curr_dis)
 			self.sh.check_range(self.curr_alt)
+			self.comm.write(data + "\n")
 
 	def start(self):
-		ts = message_filters.ApproximateTimeSynchronizer([self.imu_sub, self.gps_sub], 10, 1)
-		ts.registerCallback(self.__callback)
+		#ts = message_filters.ApproximateTimeSynchronizer([self.imu_sub, self.gps_sub], 10, 1)
+		#ts.registerCallback(self.__callback)
 		#rospy.spin()
+		rospy.Subscriber("/mavros/global_position/raw/fix", NavSatFix, self.__callback)
 		while(True):
 			try:
-				data = self.reader.read()
+				data = self.comm.read()
 				if(data):
 					if(data == "0\n"):
 						print("motor off")
