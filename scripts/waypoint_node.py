@@ -24,6 +24,7 @@ class WaypointNode:
 				break
 
 def start():
+	rospy.init_node('waypoint_node', anonymous=True)
 	wn = WaypointNode()
 	wn.start()
 					
