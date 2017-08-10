@@ -16,8 +16,8 @@ class WaypointNode:
 				if(len(data) > 2):
 					waypoint = data.split(" ")
 					for index in range(len(waypoint)):
-						lat, lon, alt = waypoint[index].split(",")
-						self.wh.addwaypoint(lat, lon, alt)
+						lat, lon, alt = waypoint[index].split("@")
+						self.wh.addwaypoint(lat.replace(",", "."), lon.replace(",", "."), alt.replace(",", "."))
 					self.wh.sendwplist()
 			except KeyboardInterrupt:
 				self.reader.close()
