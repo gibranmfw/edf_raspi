@@ -50,6 +50,8 @@ class ServoHandler(object):
 		start = time.time()
 		flag = True
 		msg.channels[self.channel] = pwm
+		#rospy.loginfo(msg)
+		#pub.publish(msg)
 		while not rospy.is_shutdown() and flag:
 			sample_time = time.time()
 			if((sample_time - start) > self.exec_time):

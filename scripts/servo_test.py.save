@@ -7,7 +7,7 @@ import time
 from mavros_msgs.msg import OverrideRCIn
 from mavros_msgs.srv import SetMode
 
-steer_channel=6
+steer_channel=2
 exec_time=1 #exc time in secs
 
 def talker():
@@ -16,18 +16,18 @@ def talker():
     r = rospy.Rate(10) #10hz
     msg = OverrideRCIn()
     start = time.time()
-    flag=True #time flag  
-    msg.channels[steer_channel]=3000 #Desired PWM value
-    pub.publish(msg)
-    rospy.loginfo(msg)
-    r.sleep()
-    #while not rospy.is_shutdown() and flag:
-    #    sample_time=time.time()
-    #    if ((sample_time - start) > exec_time):
-    #        flag=False
-    #        rospy.loginfo(msg)
-    #        pub.publish(msg)
-    #        r.sleep()
+    flag=True #time flag   
+    msg.channels[steer_channel]=2000 #Desired PWM value
+    #pub.publish(msg)
+    #rospy.loginfo(msg)
+    #r.sleep()
+    while not rospy.is_shutdown() and flag:
+        sample_time=time.time()
+        if ((sample_time - start) > exec_time):
+            flag=False
+            rospy.loginfo(msg)
+            pub.publish(msg)
+            r.sleep()
 
 if __name__ == '__main__':
 

@@ -30,28 +30,37 @@ class GPSHandler:
 	def __init__(self, data):
 		self.data = data
 
+	def get_latlong(self):
+		return (self.data.latitude, self.data.longitude)
+
 	def get_data(self):
 		return "{} {} {}".format(self.data.latitude, self.data.longitude, self.data.altitude)
 
 	def get_data_raw(self):
 		return (self.data.latitude, self.data.longitude, self.data.altitude)
 
-	def get_data_w_distance(self, slat, slong):
+	def get_data_w_dis(self, slat, slong):
+		clat = self.data.latitude
+		clong = self.data.longitude
+		distance = Formula.distance_2_coor(slat, slong, clat, clong) * 1000
+		return "{} {} {}".format(clat, clong, distance)
+
+	def get_data_w_disalt(self, slat, slong):
 		clat = self.data.latitude
 		clong = self.data.longitude
 		calt = self.data.altitude
 		distance = Formula.distance_2_coor(slat, slong, clat, clong) * 1000 #in meter
-		return "{} {} {} {}".format(clat, clong, calt, distance)
+		return "{} {} {} {}".format(clat, clong, distance, calt)
 
 class ImuHandler:
 	def __init__(self, data):
 		self.data = data
 
 	def get_orientation(self):
-		raise NotImplementedError
+		return "{} {} {}".format(self.data.orientation.x, self.data.orientation.y, self.data.orientation.z)
 
 	def get_angularv(self):
-		raise NotImplementedError
+		return "{} {} {}".format(self.data.angular_velocity.x, self.data.angular_velocity.y, self.data.angular_velocity.z)
 
 	def get_acceleration(self):
 		return "{} {} {}".format(self.data.linear_acceleration.x, self.data.linear_acceleration.y, self.data.linear_acceleration.z)

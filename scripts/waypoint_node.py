@@ -13,7 +13,7 @@ class WaypointNode:
 		while(True):
 			try:
 				data = self.reader.read()
-				if(len(data) > 1):
+				if(len(data) > 2):
 					waypoint = data.split(" ")
 					for index in range(len(waypoint)):
 						lat, lon, alt = waypoint[index].split(",")
