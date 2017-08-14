@@ -40,7 +40,7 @@ class ServoHandler(object):
 			self.__move_servo(pwm1=self.max_power)
 
 	def move2_max(self):
-		success = self.homde_handler.change_mode("manual")
+		success = self.mode_handler.change_mode("manual")
 		if(success):
 			self.__move_servo(pwm2=self.max_power)
 
@@ -61,10 +61,11 @@ class ServoHandler(object):
 		start = time.time()
 		flag = True
 		msg.channels[self.channel1] = pwm1
-		if(channel2 != -1):
+		if(self.channel2 != -1):
 			msg.channels[self.channel2] = pwm2
 		#rospy.loginfo(msg)
 		#pub.publish(msg)
+		#r.sleep()
 		while not rospy.is_shutdown() and flag:
 			sample_time = time.time()
 			if((sample_time - start) > self.exec_time):
@@ -72,4 +73,5 @@ class ServoHandler(object):
 				rospy.loginfo(msg)
 				pub.publish(msg)
 				r.sleep()
+		self.mode_handler.change_mode("auto")
 

@@ -8,7 +8,7 @@ from mavros_msgs.msg import OverrideRCIn
 from mavros_msgs.srv import SetMode
 
 #servo_channel=2
-parachute_channel=6
+parachute_channel=5
 exec_time=1 #exc time in secs
 
 def talker():
@@ -18,7 +18,7 @@ def talker():
     msg = OverrideRCIn()
     start = time.time()
     flag=True #time flag  
-    msg.channels[parachute_channel]=0 #Desired PWM value
+    msg.channels[parachute_channel]=2000 #Desired PWM value
     #msg.channels[servo_channel]=2000
     #pub.publish(msg)
     #rospy.loginfo(msg)

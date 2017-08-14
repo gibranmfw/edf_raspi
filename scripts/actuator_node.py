@@ -16,14 +16,15 @@ class ActuatorHandler:
 		#self.imu_sub = message_filters.Subscriber("/mavros/imu/data", Imu)
 		#self.gps_sub = message_filters.Subscriber("/mavros/global_position/raw/fix", NavSatFix)
 		#self.rel_alt = message_filters.Subscriber("/mavros/global_position/rel_alt", Float64)
-		self.sh = SafetyHandler()
-		self.esc = ServoHandler(2, 7)
+		self.esc = ServoHandler(5, 6)
 		self.sh = SafetyHandler(self.esc)
 		self.comm = ch()
 		self.fetch_flag = True
 		self.toggle = True
 		self.slat = 0
 		self.slong = 0
+		self.check_home = False
+		self.motor_flag = True
 	
 	def set_alt(self, alt):
 		self.curr_alt = alt
@@ -39,28 +40,35 @@ class ActuatorHandler:
 			data = gh.get_data_w_dis(self.slat, self.slong)
 			temp = data.split(" ")
 			self.curr_dis = float(temp[2])
-			#self.sh.check_range(self.curr_dis)
-			#self.sh.check_range(self.curr_alt)
+			if(self.check_home):
+				self.sh.check_range(self.curr_dis)
+				self.sh.check_range(self.curr_alt)
 			data = "{} {}".format(data, self.curr_alt)
 			print(data)
 			self.comm.write(data + "\n")
+
+	def toggle_motor(self):
+		if(self.motor_flag):
+			self.esc.move2_max()
+			self.motor_flag = False
+		else:
+			self.esc.move2_min()
+			self.motor_flag = True
 
 	def __callback(self, data):
 		if(type(data) == Float64):
 			self.set_alt(data.data)
 		elif(type(data) == String):
-			if(data.data == "0\n"):
-				print("motor off")
-				self.esc.move1_min()
-			elif(data.data == "1\n"):
-				print("motor on")
-				self.esc.move1_max()
-			elif(data.data == "2\n"):
-				print("toggle parachute")
+			if(data.data == "1\n"):
+				print("parachute on")
 				self.sh.emergency()
+			elif(data.data == "2\n"):
+				print("toggle motor")
+				self.toggle_motor()
 			elif(data.data == "3\n"):
 				print("fetching home position")
 				self.toggle_flag()
+				self.check_home = True
 		else:
 			gh = GPSHandler(data)
 			self.fetch_data(gh)

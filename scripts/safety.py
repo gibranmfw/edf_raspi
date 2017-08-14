@@ -10,7 +10,7 @@ class SafetyHandler:
 		self.motoroff_range = 175
 		self.para_flag = False
 
-	def toggle_para():
+	def toggle_para(self):
 		if(self.para_flag):
 			self.act.move2_max()
 			self.para_flag = False
@@ -20,11 +20,11 @@ class SafetyHandler:
 
 	def emergency(self):
 		if(self.para_flag):
-			self.act.move_custom(power1=800, power2=2000)
+			self.act.move_custom(power1 = 2000, power2 = 800)
 			self.para_flag = False
 		else:
-			self.act.move_custom(power1=800, power2=800)
-			self.para_flag  = True
+			self.act.move_custom(power1 = 800, power2 = 800)
+			self.para_flag = True
 
 	def check_range(self, range):
 		print(range)
