@@ -29,7 +29,7 @@ class Formula:
 class GPSHandler:
 	def __init__(self, data):
 		self.data = data
-
+	
 	def get_latlong(self):
 		return (self.data.latitude, self.data.longitude)
 
@@ -43,6 +43,7 @@ class GPSHandler:
 		clat = self.data.latitude
 		clong = self.data.longitude
 		distance = Formula.distance_2_coor(slat, slong, clat, clong) * 1000
+		print(distance)
 		return "{} {} {}".format(clat, clong, distance)
 
 	def get_data_w_disalt(self, slat, slong):
