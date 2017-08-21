@@ -1,7 +1,6 @@
 <launch>
 	<arg name="fcu_url" default="/dev/ttyACM0:115200?ids=255,252,1" />
 	
-	
 	<include file="$(find mavros)/launch/apm.launch">
 		<arg name="fcu_url" value="$(arg fcu_url)" />
 		<arg name="gcs_url" value="" />
@@ -10,7 +9,8 @@
 		<arg name="log_output" value="screen" />
 	</include>
 
-	<node pkg="aurora" name="actuator_node" type="actuator_node.py" output="screen" />
-	<node pkg="aurora" name="data_node" type="data_node.py" output="screen"/>
-	<node pkg="aurora" name="waypoint_node" type="waypoint_node.py" output="screen"/>
+	<node pkg="aurora" name="actuator_node" type="actuator_node.py" respawn="True" output="screen" />
+	<node pkg="aurora" name="data_node" type="data_node.py" respawn="True" output="screen"/>
+	<node pkg="aurora" name="waypoint_node" type="waypoint_node.py" respawn="True" output="screen"/>
+	<node pkg="aurora" name="comm_node" type="comm_node.py" respawn="True" output="screen" />
 </launch>

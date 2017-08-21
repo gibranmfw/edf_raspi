@@ -16,6 +16,7 @@ class ActuatorHandler:
 		#self.imu_sub = message_filters.Subscriber("/mavros/imu/data", Imu)
 		#self.gps_sub = message_filters.Subscriber("/mavros/global_position/raw/fix", NavSatFix)
 		#self.rel_alt = message_filters.Subscriber("/mavros/global_position/rel_alt", Float64)
+		self.pub = rospy.Publisher("/aurora/senddata", String, queue_size=50)
 		self.esc = ServoHandler(5, 6)
 		self.sh = SafetyHandler(self.esc)
 		self.comm = ch()
@@ -45,7 +46,9 @@ class ActuatorHandler:
 				self.sh.check_range(self.curr_alt)
 			data = "{} {}".format(data, self.curr_alt)
 			print(data)
-			self.comm.write(data + "\n")
+			self.pub.publish(data)
+			rospy.loginfo(data)
+			#self.comm.write(data + "\n")
 
 	def toggle_motor(self):
 		if(self.motor_flag):
@@ -56,6 +59,7 @@ class ActuatorHandler:
 			self.motor_flag = True
 
 	def __callback(self, data):
+		print("testtesttest")
 		if(type(data) == Float64):
 			self.set_alt(data.data)
 		elif(type(data) == String):

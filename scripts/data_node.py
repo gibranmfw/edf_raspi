@@ -6,6 +6,7 @@ from sensor_msgs.msg import Imu
 from sensor_msgs.msg import NavSatFix 
 from data import GPSHandler 
 from data import ImuHandler 
+from std_msgs.msg import String
 
 class DataHandler:
 	def __init__(self):
@@ -16,6 +17,7 @@ class DataHandler:
 		self.toggle = True
 		self.curr_alt = 0
 		self.curr_dis = 0
+		self.pub = rospy.Publisher("/aurora/senddata", String, queue_size=50)
 	
 	def __callback(self, imu):
 		ih = ImuHandler(imu)
@@ -27,7 +29,9 @@ class DataHandler:
 		#else:
 		#	data = gh.get_data_w_distance(self.slat, self.slong)
 		#data = "{} {}\n".format(data, ih.get_acceleration())
-		self.writer.write(ih.get_acceleration() + "\n")
+		rospy.loginfo(ih.get_acceleration())
+		self.pub.publish(ih.get_acceleration())
+		#self.writer.write(ih.get_acceleration() + "\n")
 		print(ih.get_acceleration())
 		
 	def start(self):
