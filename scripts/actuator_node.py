@@ -1,21 +1,30 @@
+"""
+This file contains definition of
+ros node to control the actuator
+"""
+
 #! /usr/bin/env python
 import rospy
 import message_filters
-from communication import CommunicationHandler as ch
-from safety import SafetyHandler
-from servo import ServoHandler
-from sensor_msgs.msg import Imu
+from utils.communication import CommunicationHandler as ch
+from utils.safety import SafetyHandler
+from utils.servo import ServoHandler
+from utils.data import GPSHandler
 from sensor_msgs.msg import NavSatFix
-from data import GPSHandler
-from data import ImuHandler
 from std_msgs.msg import Float64
 from std_msgs.msg import String
 
 class ActuatorHandler:
+	"""
+    This class handles all actuator system of the rocket
+    """
 	def __init__(self):
-		#self.imu_sub = message_filters.Subscriber("/mavros/imu/data", Imu)
-		#self.gps_sub = message_filters.Subscriber("/mavros/global_position/raw/fix", NavSatFix)
-		#self.rel_alt = message_filters.Subscriber("/mavros/global_position/rel_alt", Float64)
+		"""
+        __init__ method of ActuatorHandler class
+        used output channel 6 as parachute, and output channel 7 as motor
+
+        :return: None
+        """
 		self.pub = rospy.Publisher("/aurora/senddata", String, queue_size=50)
 		self.esc = ServoHandler(5, 6)
 		self.sh = SafetyHandler(self.esc)
@@ -28,12 +37,30 @@ class ActuatorHandler:
 		self.motor_flag = True
 	
 	def set_alt(self, alt):
+		"""
+        set current altitude
+
+		:alt: current altitude
+        :return: None
+        """
 		self.curr_alt = alt
 
 	def toggle_flag(self):
+		"""
+        set fetch_flag to True
+
+        :return: None
+        """
 		self.fetch_flag = True
 
 	def fetch_data(self, gh):
+		"""
+        fetch gps data from APM, it also set
+        current coordinate as home position
+
+		:gh: GPSHandler
+        :return: None
+        """
 		if(self.fetch_flag):
 			self.slat, self.slong = gh.get_latlong()
 			self.fetch_flag = False
@@ -48,9 +75,13 @@ class ActuatorHandler:
 			print(data)
 			self.pub.publish(data)
 			rospy.loginfo(data)
-			#self.comm.write(data + "\n")
 
 	def toggle_motor(self):
+		"""
+        toggle motor on and off
+
+        :return: None
+        """
 		if(self.motor_flag):
 			self.esc.move2_max()
 			self.motor_flag = False
@@ -59,7 +90,13 @@ class ActuatorHandler:
 			self.motor_flag = True
 
 	def __callback(self, data):
-		print("testtesttest")
+		"""
+        callback function, it determines how the program should do
+        based on the subscriber
+
+		:data: ros Subscriber object, it vary based on the Subscriber
+        :return: None
+        """
 		if(type(data) == Float64):
 			self.set_alt(data.data)
 		elif(type(data) == String):
@@ -78,15 +115,23 @@ class ActuatorHandler:
 			self.fetch_data(gh)
 
 	def start(self):
-		#ts = message_filters.ApproximateTimeSynchronizer([self.gps_sub, self.rel_alt], 10, 0.5)
-		#ts.registerCallback(self.__callback)
-		#rospy.spin()
+		"""
+        start the actuator node program, this method never stop until
+        the user terminate the program
+
+        :return: None
+        """
 		rospy.Subscriber("/mavros/global_position/global", NavSatFix, self.__callback)
 		rospy.Subscriber("/mavros/global_position/rel_alt", Float64, self.__callback)
 		rospy.Subscriber("/aurora/gcsdata", String, self.__callback)
 		rospy.spin()
 
 def start():
+	"""
+	init ros node, and start the program
+
+    :return: None
+    """
 	rospy.init_node('actuator_node', anonymous=True)
 	ah = ActuatorHandler()
 	ah.start()
